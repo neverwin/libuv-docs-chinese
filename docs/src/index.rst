@@ -1,43 +1,43 @@
 
-Welcome to the libuv documentation
+欢迎来到libuv中文文档
 ==================================
 
-Overview
+摘要
 --------
 
-libuv is a multi-platform support library with a focus on asynchronous I/O. It
-was primarily developed for use by `Node.js`_, but it's also used by `Luvit`_,
-`Julia`_, `pyuv`_, and `others`_.
+libuv是一个强调异步I/O的多平台支持库。开发它
+主要是用于 `Node.js`_ ，但它也被用在 `Luvit`_ 、
+`Julia`_ 、 `pyuv`_ 和 `其他项目`_ 。
 
 .. note::
-    In case you find errors in this documentation you can help by sending
-    `pull requests <https://github.com/libuv/libuv>`_!
+    如果你在这份翻译中发现问题你可以发送
+    `pull requests <https://github.com/neverwin/libuv-docs-chinese>`_ 来帮助!
 
 .. _Node.js: http://nodejs.org
 .. _Luvit: http://luvit.io
 .. _Julia: http://julialang.org
 .. _pyuv: https://github.com/saghul/pyuv
-.. _others: https://github.com/libuv/libuv/wiki/Projects-that-use-libuv
+.. _其他项目: https://github.com/libuv/libuv/wiki/Projects-that-use-libuv
 
 
-Features
+特点
 --------
 
-* Full-featured event loop backed by epoll, kqueue, IOCP, event ports.
-* Asynchronous TCP and UDP sockets
-* Asynchronous DNS resolution
-* Asynchronous file and file system operations
-* File system events
-* ANSI escape code controlled TTY
-* IPC with socket sharing, using Unix domain sockets or named pipes (Windows)
-* Child processes
-* Thread pool
-* Signal handling
-* High resolution clock
-* Threading and synchronization primitives
+* 全功能的时间循环基于epoll、kqueue、IOCP、event ports。
+* 异步的TCP和UDP套接字
+* 异步的DNS解析
+* 异步的文件和文件系统操作
+* 文件系统事件
+* ANSI转义代码控制的TTY
+* IPC包括套接字共享，使用Unix域套接字或有名管道（Windows）
+* 子进程
+* 线程池
+* 信号处理
+* 高分辨率时钟
+* 线程和同步原语
 
 
-Documentation
+文档
 -------------
 
 .. toctree::
@@ -49,14 +49,14 @@ Documentation
    upgrading
 
 
-Downloads
+下载
 ---------
 
-libuv can be downloaded from `here <http://dist.libuv.org/dist/>`_.
+libuv 可在 `这儿 <http://dist.libuv.org/dist/>`_ 下载.
 
 
-Installation
+安装
 ------------
 
-Installation instructions can be found in `the README <https://github.com/libuv/libuv/blob/master/README.md>`_.
+安装步骤详见 `README <https://github.com/libuv/libuv/blob/master/README.md>`_.
 
