@@ -1,138 +1,133 @@
 
 .. _design:
 
-Design overview
+设计摘要
 ===============
 
-libuv is cross-platform support library which was originally written for NodeJS. It's designed
-around the event-driven asynchronous I/O model.
+libuv 是一个跨平台支持库，原先为 NodeJS 而写。它\
+围绕着事件驱动的异步I/O模型而设计。
 
-The library provides much more than a simple abstraction over different I/O polling mechanisms:
-'handles' and 'streams' provide a high level abstraction for sockets and other entities;
-cross-platform file I/O and threading functionality is also provided, amongst other things.
+这个库提供不仅仅是对不同I/O轮询机制的简单抽象，还包括：
+‘句柄’和‘流’对套接字和其他实体提供了高级别的抽象；
+也提供了跨平台的文件I/O和线程功能，以及其他一些东西。
 
-Here is a diagram illustrating the different parts that compose libuv and what subsystem they
-relate to:
+这是一份图表解释了组成libuv的不同组件和它们相关联的子系统：
 
 .. image:: static/architecture.png
     :scale: 75%
     :align: center
 
 
-Handles and requests
+句柄和请求
 ^^^^^^^^^^^^^^^^^^^^
 
-libuv provides users with 2 abstractions to work with, in combination with the event loop:
-handles and requests.
+libuv 提供给用户使用两个抽象，与事件循环相配合：
+句柄 和 请求。
 
-Handles represent long-lived objects capable of performing certain operations while active. Some examples:
+句柄 表示能够在活动时执行特定操作的长期存在的对象。 比方说:
 
-- A prepare handle gets its callback called once every loop iteration when active.
-- A TCP server handle that gets its connection callback called every time there is a new connection.
+- 一个准备句柄当活动时每一次循环迭代调用它的回调函数。
+- 一个TCP服务器句柄每次有新连接时调用它的connection回调函数。
 
-Requests represent (typically) short-lived operations. These operations can be performed over a
-handle: write requests are used to write data on a handle; or standalone: getaddrinfo requests
-don't need a handle they run directly on the loop.
+请求代表着（通常是）短期的操作。 这些操作可以通过一个句柄执行：
+写请求用于在句柄上写数据；或是独立不需要句柄的：getaddrinfo 请求
+不需要句柄，它们直接在循环上运行。
 
 
-The I/O loop
+I/O 循环
 ^^^^^^^^^^^^
 
-The I/O (or event) loop is the central part of libuv. It establishes the content for all I/O
-operations, and it's meant to be tied to a single thread. One can run multiple event loops
-as long as each runs in a different thread. The libuv event loop (or any other API involving
-the loop or handles, for that matter) **is not thread-safe** except where stated otherwise.
+I/O（或 事件）循环是 libuv 的核心组件。 它为全部I/O操作建立内容，
+并且它必须关联到单个线程。 可以运行多个事件循环
+只要每个运行在不同的线程。 libuv 事件循环（或任何其他涉及循环或句柄的API，就此而言）
+**不是线程安全的** 除非另行说明。
 
-The event loop follows the rather usual single threaded asynchronous I/O approach: all (network)
-I/O is performed on non-blocking sockets which are polled using the best mechanism available
-on the given platform: epoll on Linux, kqueue on OSX and other BSDs, event ports on SunOS and IOCP
-on Windows. As part of a loop iteration the loop will block waiting for I/O activity on sockets
-which have been added to the poller and callbacks will be fired indicating socket conditions
-(readable, writable hangup) so handles can read, write or perform the desired I/O operation.
+事件循环遵循很常见的单线程异步I/O方法：全部（网络）
+I/O 在非阻塞的套接字上执行，在给定平台上使用最好的可用的机制来轮询：
+epoll在Linux上、kqueue在OSX和其他BSD上，event ports 在SunOS上
+和IOCP在Windows上。 作为循环迭代的一部分，循环将阻塞等待套接字上已被添加到轮询器的I/O活动，
+并且回调函数将被触发以指示套接字状态
+（可读、可写挂起），这样句柄能够读、写或执行所需要的I/O操作。
 
-In order to better understand how the event loop operates, the following diagram illustrates all
-stages of a loop iteration:
+为了更好地理解事件循环怎么运作，下面的图表显示了\
+一次循环迭代的所有阶段：
 
 .. image:: static/loop_iteration.png
     :scale: 75%
     :align: center
 
 
-#. The loop concept of 'now' is updated. The event loop caches the current time at the start of
-   the event loop tick in order to reduce the number of time-related system calls.
+#. 循环概念 '当前时间' 被更新。 在开始事件循环计的时候事件循环缓存当前的时间\
+   以减少时间相关的系统调用的数目。
 
-#. If the loop is *alive*  an iteration is started, otherwise the loop will exit immediately. So,
-   when is a loop considered to be *alive*? If a loop has active and ref'd handles, active
-   requests or closing handles it's considered to be *alive*.
+#. 如果循环处于 *活动* 状态的话一次迭代开始，否则的话循环立刻终止。 那么，
+   何时一个循环确定是 *活动* 的？如果一个循环有活动的和被引用的句柄、
+   活动的请求或正在关闭的句柄，它被确定为 *活动* 的。
 
-#. Due timers are run. All active timers scheduled for a time before the loop's concept of *now*
-   get their callbacks called.
+#. 运行适当的计时器。 所有在循环概念 *当前时间*
+   之前到期的活动的计时器的回调函数被调用。
 
-#. Pending callbacks are called. All I/O callbacks are called right after polling for I/O, for the
-   most part. There are cases, however, in which calling such a callback is deferred for the next
-   loop iteration. If the previous iteration deferred any I/O callback it will be run at this point.
+#. 待处理的回调函数被调用。 大多数情况下，在I/O轮询之后所有的I/O回调函数会被调用。
+   然而有些情况下，这些回调推延到下一次迭代中。
+   如果前一次的迭代推延了任何的I/O回调函数的调用，回调函数将在此刻运行。
 
-#. Idle handle callbacks are called. Despite the unfortunate name, idle handles are run on every
-   loop iteration, if they are active.
+#. 空转句柄的回调函数被调用。 虽有不恰当的名字，当其活动时空转句柄在每次循环迭代时都会运行。
 
-#. Prepare handle callbacks are called. Prepare handles get their callbacks called right before
-   the loop will block for I/O.
+#. 准备句柄的回调函数被调用。 在循环将为I/O阻塞前，准备句柄的回调函数被调用。
 
-#. Poll timeout is calculated. Before blocking for I/O the loop calculates for how long it should
-   block. These are the rules when calculating the timeout:
+#. 计算轮询时限。 在为I/O阻塞前，循环计算出它应该阻塞多长时间。
+   这些是计算时限的规则：
 
-        * If the loop was run with the ``UV_RUN_NOWAIT`` flag, the timeout is 0.
-        * If the loop is going to be stopped (:c:func:`uv_stop` was called), the timeout is 0.
-        * If there are no active handles or requests, the timeout is 0.
-        * If there are any idle handles active, the timeout is 0.
-        * If there are any handles pending to be closed, the timeout is 0.
-        * If none of the above cases matches, the timeout of the closest timer is taken, or
-          if there are no active timers, infinity.
+        * 如果循环使用 ``UV_RUN_NOWAIT`` 标志运行，时限是0。
+        * 如果循环即将被终止（:c:func:`uv_stop` 被调用），时限是0。
+        * 如果没有活动的句柄或请求，时限是0。
+        * 如果没有任何活动的空转句柄，时限是0。
+        * 如果有任何待处理的句柄，时限是0。
+        * 如果以上均不符合，采用最近的计时器的时限，如果没有活动计时器的话，为无穷大。
 
-#. The loop blocks for I/O. At this point the loop will block for I/O for the duration calculated
-   in the previous step. All I/O related handles that were monitoring a given file descriptor
-   for a read or write operation get their callbacks called at this point.
+#. 循环为I/O阻塞。 此刻循环将按上一步计算的时限为I/O阻塞。
+   对于所有监视给定文件描述符读写操作的I/O相关的句柄，
+   在此刻它们的回调函数被调用。
 
-#. Check handle callbacks are called. Check handles get their callbacks called right after the
-   loop has blocked for I/O. Check handles are essentially the counterpart of prepare handles.
+#. 检查句柄的回调函数被调用。 在循环为I/O阻塞之后，检查句柄的回调函数被调用。
+   检查句柄基本上与准备句柄相辅相成。
 
-#. Close callbacks are called. If a handle was closed by calling :c:func:`uv_close` it will
-   get the close callback called.
+#. 关闭 回调函数被调用。 如果一个句柄通过调用 :c:func:`uv_close` 被关闭，
+   它的回调函数将被调用。
 
-#. Special case in case the loop was run with ``UV_RUN_ONCE``, as it implies forward progress.
-   It's possible that no I/O callbacks were fired after blocking for I/O, but some time has passed
-   so there might be timers which are due, those timers get their callbacks called.
+#. 当循环以 ``UV_RUN_ONCE`` 的特别情况下，它意味着前移。
+   在I/O阻塞之后也许没有触发I/O回调函数，但是已经过去了一些时间，
+   所以可能有到期的计时器，这些计时器的回调函数被调用。
 
-#. Iteration ends. If the loop was run with ``UV_RUN_NOWAIT`` or ``UV_RUN_ONCE`` modes the
-   iteration ends and :c:func:`uv_run` will return. If the loop was run with ``UV_RUN_DEFAULT``
-   it will continue from the start if it's still *alive*, otherwise it will also end.
+#. 迭代结束。 如果循环以 ``UV_RUN_NOWAIT`` 或 ``UV_RUN_ONCE`` 模式运行则
+   迭代结束且 :c:func:`uv_run` 将返回。 如果循环以 ``UV_RUN_DEFAULT`` 运行，
+   它将继续从头开始如果它仍是 *活动* 的，否则的话它也会结束。
 
 
 .. important::
-    libuv uses a thread pool to make asynchronous file I/O operations possible, but
-    network I/O is **always** performed in a single thread, each loop's thread.
+    libuv 使用了一个线程池来使得异步文件I/O操作可实现，
+    但是网络I/O **总是** 在单线程中执行，即每个循环的线程。
 
 .. note::
-    While the polling mechanism is different, libuv makes the execution model consistent
-    across Unix systems and Windows.
+    虽然轮询机制不同，libuv 提供了在Unix系统和Windows下一致的执行模型。
 
 
-File I/O
+文件 I/O
 ^^^^^^^^
 
-Unlike network I/O, there are no platform-specific file I/O primitives libuv could rely on,
-so the current approach is to run blocking file I/O operations in a thread pool.
+不像是网络 I/O，libuv 没有平台特定的文件I/O原语可以依靠，
+因此目前的方案是在线程池中运行阻塞的文件I/O操作。
 
-For a thorough explanation of the cross-platform file I/O landscape, checkout
-`this post <http://blog.libtorrent.org/2012/10/asynchronous-disk-io/>`_.
+对跨平台文件I/O规划的详尽介绍，参考
+`这篇文章 <http://blog.libtorrent.org/2012/10/asynchronous-disk-io/>`_ 。
 
-libuv currently uses a global thread pool on which all loops can queue work. 3 types of
-operations are currently run on this pool:
+libuv 目前使用一个全局的线程池，各类循环都能够在它上面排队执行。
+目前在这个池上运作的有3种操作：
 
-    * File system operations
-    * DNS functions (getaddrinfo and getnameinfo)
-    * User specified code via :c:func:`uv_queue_work`
+    * 文件系统操作
+    * DNS功能 (getaddrinfo 和 getnameinfo)
+    * 用户定义的代码于 :c:func:`uv_queue_work`
 
 .. warning::
-    See the :c:ref:`threadpool` section for more details, but keep in mind the thread pool size
-    is quite limited.
+    见 :c:ref:`threadpool` 部分获取更多详细信息，但是记好了此线程池的大小\
+    非常有限。
