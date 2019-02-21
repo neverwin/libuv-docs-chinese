@@ -1,9 +1,9 @@
 .. _upgrading:
 
-Upgrading
+版本升级
 =========
 
-Migration guides for different libuv versions, starting with 1.0.
+对不同libuv版本的迁移指南，开始于1.0。
 
 .. toctree::
    :maxdepth: 1
