@@ -1,6 +1,6 @@
 .. _api:
 
-API documentation
+API文档
 =================
 
 .. toctree::
