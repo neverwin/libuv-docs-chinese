@@ -1,60 +1,58 @@
 
 .. _version:
 
-Version-checking macros and functions
+用于版本检测的宏和函数
 =====================================
 
-Starting with version 1.0.0 libuv follows the `semantic versioning`_
-scheme. This means that new APIs can be introduced throughout the lifetime of
-a major release. In this section you'll find all macros and functions that
-will allow you to write or compile code conditionally, in order to work with
-multiple libuv versions.
+始于版本1.0.0，libuv遵循 `semantic versioning`_
+模式。这意味着新的API能在一个主版本发布的任何时期引入。
+在这个部分你将会了解所有允许你有条件地编写或编译代码的宏和函数，
+用于跟多个libuv版本打交道。
 
 .. _semantic versioning: http://semver.org
 
 
-Macros
+宏
 ------
 
 .. c:macro:: UV_VERSION_MAJOR
 
-    libuv version's major number.
+    libuv版本中的主编号。
 
 .. c:macro:: UV_VERSION_MINOR
 
-    libuv version's minor number.
+    libuv版本中的次编号。
 
 .. c:macro:: UV_VERSION_PATCH
 
-    libuv version's patch number.
+    libuv版本中的补丁编号。
 
 .. c:macro:: UV_VERSION_IS_RELEASE
 
-    Set to 1 to indicate a release version of libuv, 0 for a development
-    snapshot.
+    设置成 1 代表着一个libuv的发布版，0 表示开发版快照。
 
 .. c:macro:: UV_VERSION_SUFFIX
 
-    libuv version suffix. Certain development releases such as Release Candidates
-    might have a suffix such as "rc".
+    libuv版本后缀。特定的开发发布版本例如 Release Candidates
+    可能有个后缀比如 "rc" 。
 
 .. c:macro:: UV_VERSION_HEX
 
-    Returns the libuv version packed into a single integer. 8 bits are used for
-    each component, with the patch number stored in the 8 least significant
-    bits. E.g. for libuv 1.2.3 this would be 0x010203.
+    返回libuv的版本信息打包进单个整数中。每个部分占8位，
+    补丁版本在最低8位。
+    比方说，libuv 1.2.3 就是 0x010203 。
 
     .. versionadded:: 1.7.0
 
 
-Functions
+函数
 ---------
 
 .. c:function:: unsigned int uv_version(void)
 
-    Returns :c:macro:`UV_VERSION_HEX`.
+    返回 :c:macro:`UV_VERSION_HEX`.
 
 .. c:function:: const char* uv_version_string(void)
 
-    Returns the libuv version number as a string. For non-release versions the
-    version suffix is included.
+    以字符串形式返回libuv版本号。
+    对于非发布版本，版本后缀也包括在内。
