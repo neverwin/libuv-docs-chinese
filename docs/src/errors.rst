@@ -1,323 +1,323 @@
 
 .. _errors:
 
-Error handling
+错误处理
 ==============
 
-In libuv errors are negative numbered constants. As a rule of thumb, whenever
-there is a status parameter, or an API functions returns an integer, a negative
-number will imply an error.
+在libuv中，错误是负数常量。 根据经验，
+不管何时有一个状态参数，或是一个API函数返回一个整数的时候，
+一个负数意味着一个错误。
 
-When a function which takes a callback returns an error, the callback will never
-be called.
+当一个使用回调函数的函数返回了一个错误，
+这个回调函数将永远不会被调用。
 
 .. note::
-    Implementation detail: on Unix error codes are the negated `errno` (or `-errno`), while on
-    Windows they are defined by libuv to arbitrary negative numbers.
+    实现的细节：在 Unix 中错误代码是负的 `errno` （或者说 `-errno`），当在
+    Windows 上它们由libuv定义为任意的负数。
 
 
-Error constants
+错误常量
 ---------------
 
 .. c:macro:: UV_E2BIG
 
-    argument list too long
+    参数列表太长了
 
 .. c:macro:: UV_EACCES
 
-    permission denied
+    权限被拒绝
 
 .. c:macro:: UV_EADDRINUSE
 
-    address already in use
+    地址已经被使用
 
 .. c:macro:: UV_EADDRNOTAVAIL
 
-    address not available
+    地址不可用
 
 .. c:macro:: UV_EAFNOSUPPORT
 
-    address family not supported
+    不支持的地址族
 
 .. c:macro:: UV_EAGAIN
 
-    resource temporarily unavailable
+    资源临时不可用
 
 .. c:macro:: UV_EAI_ADDRFAMILY
 
-    address family not supported
+    不支持的地址族
 
 .. c:macro:: UV_EAI_AGAIN
 
-    temporary failure
+    临时性失败
 
 .. c:macro:: UV_EAI_BADFLAGS
 
-    bad ai_flags value
+    错的 ai_flags 值
 
 .. c:macro:: UV_EAI_BADHINTS
 
-    invalid value for hints
+    无效的指示值
 
 .. c:macro:: UV_EAI_CANCELED
 
-    request canceled
+    请求取消了
 
 .. c:macro:: UV_EAI_FAIL
 
-    permanent failure
+    永久性失败
 
 .. c:macro:: UV_EAI_FAMILY
 
-    ai_family not supported
+    ai_family 不支持
 
 .. c:macro:: UV_EAI_MEMORY
 
-    out of memory
+    内存用完
 
 .. c:macro:: UV_EAI_NODATA
 
-    no address
+    没有地址
 
 .. c:macro:: UV_EAI_NONAME
 
-    unknown node or service
+    未知的代码或服务
 
 .. c:macro:: UV_EAI_OVERFLOW
 
-    argument buffer overflow
+    参数缓存越界
 
 .. c:macro:: UV_EAI_PROTOCOL
 
-    resolved protocol is unknown
+    解析的协议未知
 
 .. c:macro:: UV_EAI_SERVICE
 
-    service not available for socket type
+    对套接字类型，服务不可用
 
 .. c:macro:: UV_EAI_SOCKTYPE
 
-    socket type not supported
+    套接字类型不支持
 
 .. c:macro:: UV_EALREADY
 
-    connection already in progress
+    连接已经在进行中
 
 .. c:macro:: UV_EBADF
 
-    bad file descriptor
+    错的文件描述符
 
 .. c:macro:: UV_EBUSY
 
-    resource busy or locked
+    资源忙或是锁定了
 
 .. c:macro:: UV_ECANCELED
 
-    operation canceled
+    操作取消了
 
 .. c:macro:: UV_ECHARSET
 
-    invalid Unicode character
+    非法的 Unicode 字符
 
 .. c:macro:: UV_ECONNABORTED
 
-    software caused connection abort
+    软件导致的连接中止
 
 .. c:macro:: UV_ECONNREFUSED
 
-    connection refused
+    连接被拒绝
 
 .. c:macro:: UV_ECONNRESET
 
-    connection reset by peer
+    连接被远端重置
 
 .. c:macro:: UV_EDESTADDRREQ
 
-    destination address required
+    需要目的地址
 
 .. c:macro:: UV_EEXIST
 
-    file already exists
+    文件已经存在
 
 .. c:macro:: UV_EFAULT
 
-    bad address in system call argument
+    在系统调用参数里有错的地址
 
 .. c:macro:: UV_EFBIG
 
-    file too large
+    文件太大了
 
 .. c:macro:: UV_EHOSTUNREACH
 
-    host is unreachable
+    主机不可达
 
 .. c:macro:: UV_EINTR
 
-    interrupted system call
+    中断的系统调用
 
 .. c:macro:: UV_EINVAL
 
-    invalid argument
+    非法参数
 
 .. c:macro:: UV_EIO
 
-    i/o error
+    i/o 错误
 
 .. c:macro:: UV_EISCONN
 
-    socket is already connected
+    套接字已连接
 
 .. c:macro:: UV_EISDIR
 
-    illegal operation on a directory
+    在文件夹上的非法操作
 
 .. c:macro:: UV_ELOOP
 
-    too many symbolic links encountered
+    遇到了太多符号链接
 
 .. c:macro:: UV_EMFILE
 
-    too many open files
+    打开的文件太多了
 
 .. c:macro:: UV_EMSGSIZE
 
-    message too long
+    消息太长了
 
 .. c:macro:: UV_ENAMETOOLONG
 
-    name too long
+    名字太长了
 
 .. c:macro:: UV_ENETDOWN
 
-    network is down
+    网络停机
 
 .. c:macro:: UV_ENETUNREACH
 
-    network is unreachable
+    网络不可达
 
 .. c:macro:: UV_ENFILE
 
-    file table overflow
+    文件表溢出
 
 .. c:macro:: UV_ENOBUFS
 
-    no buffer space available
+    没有可用的缓存空间
 
 .. c:macro:: UV_ENODEV
 
-    no such device
+    没有这样的设备
 
 .. c:macro:: UV_ENOENT
 
-    no such file or directory
+    没哟这样的文件或文件夹
 
 .. c:macro:: UV_ENOMEM
 
-    not enough memory
+    内存不够
 
 .. c:macro:: UV_ENONET
 
-    machine is not on the network
+    机器不在网络上
 
 .. c:macro:: UV_ENOPROTOOPT
 
-    protocol not available
+    协议不可用
 
 .. c:macro:: UV_ENOSPC
 
-    no space left on device
+    设备上没有剩余空间
 
 .. c:macro:: UV_ENOSYS
 
-    function not implemented
+    未被实现的函数
 
 .. c:macro:: UV_ENOTCONN
 
-    socket is not connected
+    套接字未连接
 
 .. c:macro:: UV_ENOTDIR
 
-    not a directory
+    不是一个文件夹
 
 .. c:macro:: UV_ENOTEMPTY
 
-    directory not empty
+    文件夹非空
 
 .. c:macro:: UV_ENOTSOCK
 
-    socket operation on non-socket
+    在非套接字上进行套接字操作
 
 .. c:macro:: UV_ENOTSUP
 
-    operation not supported on socket
+    套接字不支持的操作
 
 .. c:macro:: UV_EPERM
 
-    operation not permitted
+    不允许的操作
 
 .. c:macro:: UV_EPIPE
 
-    broken pipe
+    破碎的管道
 
 .. c:macro:: UV_EPROTO
 
-    protocol error
+    协议错误
 
 .. c:macro:: UV_EPROTONOSUPPORT
 
-    protocol not supported
+    协议不支持
 
 .. c:macro:: UV_EPROTOTYPE
 
-    protocol wrong type for socket
+    对套接字的错误的协议类型
 
 .. c:macro:: UV_ERANGE
 
-    result too large
+    结果太大了
 
 .. c:macro:: UV_EROFS
 
-    read-only file system
+    只读的文件系统
 
 .. c:macro:: UV_ESHUTDOWN
 
-    cannot send after transport endpoint shutdown
+    不能在传输终点关机后发送
 
 .. c:macro:: UV_ESPIPE
 
-    invalid seek
+    非法查寻
 
 .. c:macro:: UV_ESRCH
 
-    no such process
+    没有这样的进程
 
 .. c:macro:: UV_ETIMEDOUT
 
-    connection timed out
+    连接超时
 
 .. c:macro:: UV_ETXTBSY
 
-    text file is busy
+    文本文件忙
 
 .. c:macro:: UV_EXDEV
 
-    cross-device link not permitted
+    不允许跨设备链接
 
 .. c:macro:: UV_UNKNOWN
 
-    unknown error
+    未知错误
 
 .. c:macro:: UV_EOF
 
-    end of file
+    文件结尾
 
 .. c:macro:: UV_ENXIO
 
-    no such device or address
+    没有这样的设备或地址
 
 .. c:macro:: UV_EMLINK
 
-    too many links
+    太多的链接
 
 
 API
@@ -325,41 +325,40 @@ API
 
 .. c:function:: UV_ERRNO_MAP(iter_macro)
 
-    Macro that expands to a series of invocations of `iter_macro` for
-    each of the error constants above. `iter_macro` is invoked with two
-    arguments: the name of the error constant without the `UV_` prefix,
-    and the error message string literal.
+    对以上每个错误常量扩展出一系列的 `iter_macro` 调用的宏。
+    `iter_macro` 以两个参数调用：不带 `UV_` 前缀的错误常量名，
+    和错误信息字符串字面量。
 
 .. c:function:: const char* uv_strerror(int err)
 
-    Returns the error message for the given error code.  Leaks a few bytes
-    of memory when you call it with an unknown error code.
+    返回对应给定错误代码的错误信息。
+    泄漏一些字节的内存，当你以未知的错误代码调用它时。
 
 .. c:function:: char* uv_strerror_r(int err, char* buf, size_t buflen)
 
-    Returns the error message for the given error code. The zero-terminated
-    message is stored in the user-supplied buffer `buf` of at most `buflen` bytes.
+    返回对应给定错误代码的错误信息。
+    以零结尾的信息存储在用户提供的缓冲区 `buf` 里，不超过 `buflen` 字节。
 
     .. versionadded:: 1.22.0
 
 .. c:function:: const char* uv_err_name(int err)
 
-    Returns the error name for the given error code.  Leaks a few bytes
-    of memory when you call it with an unknown error code.
+    返回对应给定错误代码的错误名。
+    泄漏一些字节的内存，当你以未知的错误代码调用它时。
 
 .. c:function:: char* uv_err_name_r(int err, char* buf, size_t buflen)
 
-    Returns the error name for the given error code. The zero-terminated
-    name is stored in the user-supplied buffer `buf` of at most `buflen` bytes.
+    返回对应给定错误代码的错误名。
+    以零结尾的名称存储在用户提供的缓冲区 `buf` 里，不超过 `buflen` 字节。
 
     .. versionadded:: 1.22.0
 
 .. c:function:: int uv_translate_sys_error(int sys_errno)
 
-   Returns the libuv error code equivalent to the given platform dependent error
-   code: POSIX error codes on Unix (the ones stored in `errno`), and Win32 error
-   codes on Windows (those returned by `GetLastError()` or `WSAGetLastError()`).
+   返回等同于给定平台相关错误代码的libuv错误代码：
+   POSIX 错误代码在 Unix 上（存储于 `errno` ），
+   和Win32错误代码在Windows上（ `GetLastError()` 或 `WSAGetLastError()` 返回的）。
 
-   If `sys_errno` is already a libuv error, it is simply returned.
+   如果 `sys_errno` 已经是一个libuv错误，则直接返回。
 
    .. versionchanged:: 1.10.0 function declared public.
