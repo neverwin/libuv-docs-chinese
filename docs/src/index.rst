@@ -5,13 +5,13 @@
 摘要
 --------
 
-libuv是一个强调异步I/O的多平台支持库。开发它
+libuv是一个强调异步I/O的多平台支持库。 开发它
 主要是用于 `Node.js`_ ，但它也被用在 `Luvit`_ 、
 `Julia`_ 、 `pyuv`_ 和 `其他项目`_ 。
 
 .. note::
     如果你在这份翻译中发现问题你可以发送
-    `pull requests <https://github.com/neverwin/libuv-docs-chinese>`_ 来帮助!
+    `pull requests <https://github.com/neverwin/libuv-docs-chinese>`_ 来帮助！
 
 .. _Node.js: http://nodejs.org
 .. _Luvit: http://luvit.io
@@ -23,7 +23,7 @@ libuv是一个强调异步I/O的多平台支持库。开发它
 特点
 --------
 
-* 全功能的时间循环基于epoll、kqueue、IOCP、event ports。
+* 全功能的事件循环基于epoll、kqueue、IOCP、event ports
 * 异步的TCP和UDP套接字
 * 异步的DNS解析
 * 异步的文件和文件系统操作
@@ -52,11 +52,11 @@ libuv是一个强调异步I/O的多平台支持库。开发它
 下载
 ---------
 
-libuv 可在 `这儿 <http://dist.libuv.org/dist/>`_ 下载.
+libuv 可在 `这儿 <http://dist.libuv.org/dist/>`_ 下载。
 
 
 安装
 ------------
 
-安装步骤详见 `README <https://github.com/libuv/libuv/blob/master/README.md>`_.
+安装步骤详见 `README <https://github.com/libuv/libuv/blob/master/README.md>`_ 。
 
