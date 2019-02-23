@@ -1,31 +1,31 @@
 
 .. _prepare:
 
-:c:type:`uv_prepare_t` --- Prepare handle
+:c:type:`uv_prepare_t` --- 准备句柄
 =========================================
 
-Prepare handles will run the given callback once per loop iteration, right
-before polling for i/o.
+准备句柄将在每次循环迭代时运行给定的回调函数，
+在I/O轮询前一刻。
 
 
-Data types
+数据类型
 ----------
 
 .. c:type:: uv_prepare_t
 
-    Prepare handle type.
+    准备句柄类型。
 
 .. c:type:: void (*uv_prepare_cb)(uv_prepare_t* handle)
 
-    Type definition for callback passed to :c:func:`uv_prepare_start`.
+    传递给 :c:func:`uv_prepare_start` 的回调函数的类型定义。
 
 
-Public members
+公共成员
 ^^^^^^^^^^^^^^
 
 N/A
 
-.. seealso:: The :c:type:`uv_handle_t` members also apply.
+.. seealso:: :c:type:`uv_handle_t` 的成员也适用。
 
 
 API
@@ -33,14 +33,14 @@ API
 
 .. c:function:: int uv_prepare_init(uv_loop_t* loop, uv_prepare_t* prepare)
 
-    Initialize the handle.
+    初始化句柄。
 
 .. c:function:: int uv_prepare_start(uv_prepare_t* prepare, uv_prepare_cb cb)
 
-    Start the handle with the given callback.
+    以给定的回调函数开始句柄。
 
 .. c:function:: int uv_prepare_stop(uv_prepare_t* prepare)
 
-    Stop the handle, the callback will no longer be called.
+    停止句柄，回调函数将不会再被调用。
 
-.. seealso:: The :c:type:`uv_handle_t` API functions also apply.
+.. seealso:: :c:type:`uv_handle_t` 的API函数也适用。
