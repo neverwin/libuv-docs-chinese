@@ -161,7 +161,7 @@
 
 .. c:macro:: UV_EIO
 
-    i/o 错误
+    I/O 错误
 
 .. c:macro:: UV_EISCONN
 
