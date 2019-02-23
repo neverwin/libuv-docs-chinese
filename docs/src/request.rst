@@ -1,37 +1,37 @@
 
 .. _request:
 
-:c:type:`uv_req_t` --- Base request
+:c:type:`uv_req_t` --- 基础请求
 ===================================
 
-`uv_req_t` is the base type for all libuv request types.
+`uv_req_t` 是所有libuv请求类型的基类型。
 
-Structures are aligned so that any libuv request can be cast to `uv_req_t`.
-All API functions defined here work with any request type.
+结构体是对齐的以便任何libuv请求能转化成 `uv_req_t`。
+这里定义的所有API函数适用于任意请求类型。
 
 
-Data types
+数据类型
 ----------
 
 .. c:type:: uv_req_t
 
-    The base libuv request structure.
+    基础libuv请求结构体。
 
 .. c:type:: uv_any_req
 
-    Union of all request types.
+    所有请求类型的并集。
 
 
-Public members
+公共成员
 ^^^^^^^^^^^^^^
 
 .. c:member:: void* uv_req_t.data
 
-    Space for user-defined arbitrary data. libuv does not use this field.
+    用户定义的任意数据的空间。 libuv不使用且不触及这个字段。
 
 .. c:member:: uv_req_type uv_req_t.type
 
-    Indicated the type of request. Readonly.
+    指向请求的类型。 只读。
 
     ::
 
@@ -55,62 +55,57 @@ API
 
 .. c:function:: UV_REQ_TYPE_MAP(iter_macro)
 
-    Macro that expands to a series of invocations of `iter_macro` for
-    each of the request types. `iter_macro` is invoked with two
-    arguments: the name of the `uv_req_type` element without the `UV_`
-    prefix, and the name of the corresponding structure type without the
-    `uv_` prefix and `_t` suffix.
+    对每个请求类型扩展出一系列的 `iter_macro` 调用的宏。
+    `iter_macro` 以两个参数调用：不带 `UV_` 前缀的 `uv_req_type` 元素名，
+    和不带 `uv_` 前缀和 `_t` 后缀的对应的结构体类型名。
 
 .. c:function:: int uv_cancel(uv_req_t* req)
 
-    Cancel a pending request. Fails if the request is executing or has finished
-    executing.
+    取消待处理的请求。 如果请求在执行中或已经执行完毕时失败。
 
-    Returns 0 on success, or an error code < 0 on failure.
+    返回 0 当成功时，或者一个 < 0 的错误代码当失败时。
 
-    Only cancellation of :c:type:`uv_fs_t`, :c:type:`uv_getaddrinfo_t`,
-    :c:type:`uv_getnameinfo_t` and :c:type:`uv_work_t` requests is
-    currently supported.
+    当前仅支持取消 :c:type:`uv_fs_t` 、 :c:type:`uv_getaddrinfo_t` 、
+    :c:type:`uv_getnameinfo_t` 和 :c:type:`uv_work_t` 请求。 
 
-    Cancelled requests have their callbacks invoked some time in the future.
-    It's **not** safe to free the memory associated with the request until the
-    callback is called.
+    取消的请求的回调函数在未来某时被调用。
+    释放关联于请求的内存是 **不** 安全的直到回调函数调用之后。
 
-    Here is how cancellation is reported to the callback:
+    这是取消如何报告给回调函数的方式：
 
-    * A :c:type:`uv_fs_t` request has its req->result field set to `UV_ECANCELED`.
+    * 一个 :c:type:`uv_fs_t` 请求的 req->result 字段设为 `UV_ECANCELED` 。
 
-    * A :c:type:`uv_work_t`, :c:type:`uv_getaddrinfo_t` or c:type:`uv_getnameinfo_t`
-      request has its callback invoked with status == `UV_ECANCELED`.
+    * 一个 :c:type:`uv_work_t` 、 :c:type:`uv_getaddrinfo_t` 或 :c:type:`uv_getnameinfo_t`
+      请求的回调函数以 status == `UV_ECANCELED` 被调用。
 
 .. c:function:: size_t uv_req_size(uv_req_type type)
 
-    Returns the size of the given request type. Useful for FFI binding writers
-    who don't want to know the structure layout.
+    返回给定请求类型的大小。
+    对不想知道结构体布局的FFI绑定作者有用。
 
 .. c:function:: void* uv_req_get_data(const uv_req_t* req)
 
-    Returns `req->data`.
+    返回 `req->data`.
 
     .. versionadded:: 1.19.0
 
 .. c:function:: void* uv_req_set_data(uv_req_t* req, void* data)
 
-    Sets `req->data` to `data`.
+    设置 `req->data` 为 `data`.
 
     .. versionadded:: 1.19.0
 
 .. c:function:: uv_req_type uv_req_get_type(const uv_req_t* req)
 
-    Returns `req->type`.
+    返回 `req->type`.
 
     .. versionadded:: 1.19.0
 
 .. c:function:: const char* uv_req_type_name(uv_req_type type)
 
-    Returns the name for the equivalent struct for a given request type,
-    e.g. `"connect"` (as in :c:type:`uv_connect_t`) for `UV_CONNECT`.
+    返回给定请求类型等效的结构体名称，
+    例如对 `UV_CONNECT` 是 `"connect"` （即 :c:type:`uv_connect_t` ）。
 
-    If no such request type exists, this returns `NULL`.
+    如果不存在这样的请求类型，它返回 `NULL` 。
 
     .. versionadded:: 1.19.0
