@@ -152,7 +152,7 @@ API
 
 .. c:function:: void uv_update_time(uv_loop_t* loop)
 
-    更新事件循环概念 "当前时间" 。 Libuv在事件循环计时开始时缓存当前时间，
+    更新事件循环概念 "now" 。 Libuv在事件循环计时开始时缓存当前时间，
     以减少时间相关的系统调用数目。
 
     你通常将不会需要调用这个函数，
