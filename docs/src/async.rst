@@ -1,31 +1,30 @@
 
 .. _async:
 
-:c:type:`uv_async_t` --- Async handle
+:c:type:`uv_async_t` --- 异步句柄
 =====================================
 
-Async handles allow the user to "wakeup" the event loop and get a callback
-called from another thread.
+异步句柄允许用户 "唤醒" 事件循环并且从另一个线程调用回调函数。
 
 
-Data types
+数据类型
 ----------
 
 .. c:type:: uv_async_t
 
-    Async handle type.
+    异步句柄类型。
 
 .. c:type:: void (*uv_async_cb)(uv_async_t* handle)
 
-    Type definition for callback passed to :c:func:`uv_async_init`.
+    传递给 :c:func:`uv_async_init` 的回调函数的类型定义。
 
 
-Public members
+公共成员
 ^^^^^^^^^^^^^^
 
 N/A
 
-.. seealso:: The :c:type:`uv_handle_t` members also apply.
+.. seealso:: :c:type:`uv_handle_t` 的成员也适用。
 
 
 API
@@ -33,29 +32,27 @@ API
 
 .. c:function:: int uv_async_init(uv_loop_t* loop, uv_async_t* async, uv_async_cb async_cb)
 
-    Initialize the handle. A NULL callback is allowed.
+    初始化句柄。 允许回调函数为NULL。
 
-    :returns: 0 on success, or an error code < 0 on failure.
+    :returns: 0 当成功时，或者一个 < 0 的错误代码当失败时。
 
     .. note::
-        Unlike other handle initialization  functions, it immediately starts the handle.
+        不同于其他句柄初始化函数，句柄立刻开始。
 
 .. c:function:: int uv_async_send(uv_async_t* async)
 
-    Wake up the event loop and call the async handle's callback.
+    唤醒事件循环并且调用异步句柄的回调函数。
 
-    :returns: 0 on success, or an error code < 0 on failure.
+    :returns: 0 当成功时，或者一个 < 0 的错误代码当失败时。
 
     .. note::
-        It's safe to call this function from any thread. The callback will be called on the
-        loop thread.
+        从任何线程调用这个函数都是安全的。
+        回调函数将从循环的线程上被调用。
 
     .. warning::
-        libuv will coalesce calls to :c:func:`uv_async_send`, that is, not every call to it will
-        yield an execution of the callback. For example: if :c:func:`uv_async_send` is called 5
-        times in a row before the callback is called, the callback will only be called once. If
-        :c:func:`uv_async_send` is called again after the callback was called, it will be called
-        again.
+        libuv将会合并对 :c:func:`uv_async_send` 的调用，那就是说，不是对它的每个调用会 yield 回调函数的执行。
+        例如：如果在回调函数被调用前一连调用 :c:func:`uv_async_send` 5 次，回调函数将只会调用一次。
+        如果在回调函数被调用后再次调用 :c:func:`uv_async_send` ，回调函数将会再次被调用。
 
 .. seealso::
-    The :c:type:`uv_handle_t` API functions also apply.
+    :c:type:`uv_handle_t` 的API函数也适用。
