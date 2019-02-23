@@ -241,7 +241,7 @@ API
 .. c:function:: const char* uv_handle_type_name(uv_handle_type type)
 
     返回给定句柄类型等效的结构体名称，
-    例如对 `UV_NAMED_PIPE` 是 `"管道"` （即 :c:type:`uv_pipe_t` ）。
+    例如对 `UV_NAMED_PIPE` 是 `"pipe"` （即 :c:type:`uv_pipe_t` ）。
 
     如果不存在这样的句柄类型，它返回 `NULL` 。
 
