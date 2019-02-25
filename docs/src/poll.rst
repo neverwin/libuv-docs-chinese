@@ -38,7 +38,7 @@
 
 .. c:type:: void (*uv_poll_cb)(uv_poll_t* handle, int status, int events)
 
-    传递给  :c:func:`uv_poll_start` 的回调函数的类型定义。
+    传递给 :c:func:`uv_poll_start` 的回调函数的类型定义。
 
 .. c:type:: uv_poll_event
 
