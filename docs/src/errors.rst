@@ -169,7 +169,7 @@
 
 .. c:macro:: UV_EISDIR
 
-    在文件夹上的非法操作
+    在目录上的非法操作
 
 .. c:macro:: UV_ELOOP
 
@@ -209,7 +209,7 @@
 
 .. c:macro:: UV_ENOENT
 
-    没哟这样的文件或文件夹
+    没哟这样的文件或目录
 
 .. c:macro:: UV_ENOMEM
 
@@ -237,11 +237,11 @@
 
 .. c:macro:: UV_ENOTDIR
 
-    不是一个文件夹
+    不是一个目录
 
 .. c:macro:: UV_ENOTEMPTY
 
-    文件夹非空
+    目录非空
 
 .. c:macro:: UV_ENOTSOCK
 
