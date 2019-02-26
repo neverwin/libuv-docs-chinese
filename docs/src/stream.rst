@@ -1,104 +1,101 @@
 
 .. _stream:
 
-:c:type:`uv_stream_t` --- Stream handle
+:c:type:`uv_stream_t` --- 流句柄
 =======================================
 
-Stream handles provide an abstraction of a duplex communication channel.
-:c:type:`uv_stream_t` is an abstract type, libuv provides 3 stream implementations
-in the form of :c:type:`uv_tcp_t`, :c:type:`uv_pipe_t` and :c:type:`uv_tty_t`.
+流句柄提供对双工通信通道的一种抽象。
+:c:type:`uv_stream_t` 是一个抽象类型，libuv提供了3种流的实现以
+:c:type:`uv_tcp_t` 、 :c:type:`uv_pipe_t` 和 :c:type:`uv_tty_t` 的形式。
 
 
-Data types
+数据类型
 ----------
 
 .. c:type:: uv_stream_t
 
-    Stream handle type.
+    流句柄类型。
 
 .. c:type:: uv_connect_t
 
-    Connect request type.
+    连接请求类型。
 
 .. c:type:: uv_shutdown_t
 
-    Shutdown request type.
+    停机请求类型。
 
 .. c:type:: uv_write_t
 
-    Write request type. Careful attention must be paid when reusing objects of
-    this type. When a stream is in non-blocking mode, write requests sent
-    with ``uv_write`` will be queued. Reusing objects at this point is undefined
-    behaviour. It is safe to reuse the ``uv_write_t`` object only after the
-    callback passed to ``uv_write`` is fired.
+    写请求类型。 当复用这种对象时必须小心注意。
+    当一个流处在非阻塞模式，用 ``uv_write`` 发送的写请求将被排队。
+    在此刻复用对象是未定义的行为。
+    仅在传递给 ``uv_write`` 的回调函数执行完毕后才能安全地复用 ``uv_write_t`` 对象。
 
 .. c:type:: void (*uv_read_cb)(uv_stream_t* stream, ssize_t nread, const uv_buf_t* buf)
 
-    Callback called when data was read on a stream.
+    数据在流上读取时的回调函数。
 
-    `nread` is > 0 if there is data available or < 0 on error. When we've
-    reached EOF, `nread` will be set to ``UV_EOF``. When `nread` < 0,
-    the `buf` parameter might not point to a valid buffer; in that case
-    `buf.len` and `buf.base` are both set to 0.
+    `nread` 是 > 0 如果有可用的数据，或 < 0 当错误时。
+    当我们已经到达EOF， `nread` 将被设置为 ``UV_EOF`` 。
+    当 `nread` < 0 时 `buf` 参数可能并不指向一个合法的缓冲区；
+    在那种情况下 `buf.len` 和 `buf.base` 都被设为0。
 
     .. note::
-        `nread` might be 0, which does *not* indicate an error or EOF. This
-        is equivalent to ``EAGAIN`` or ``EWOULDBLOCK`` under ``read(2)``.
+        `nread` 可能是0，并 *不* 预示着一个错误或EOF。
+        这等同于在 ``read(2)`` 下的 ``EAGAIN`` 或 ``EWOULDBLOCK``。
 
-    The callee is responsible for stopping/closing the stream when an error happens
-    by calling :c:func:`uv_read_stop` or :c:func:`uv_close`. Trying to read
-    from the stream again is undefined.
+    调用者负责在错误发生时通过调用 :c:func:`uv_read_stop` 或 :c:func:`uv_close` 停止/关闭流。
+    尝试从流再次读取是未定义的。
 
-    The callee is responsible for freeing the buffer, libuv does not reuse it.
-    The buffer may be a null buffer (where buf->base=NULL and buf->len=0) on
-    error.
+    调用者负责释放缓冲区，libuv不会复用它。
+    在错误时缓冲区可能是一个空缓冲区（这里 buf->base=NULL 且 buf->len=0）。
 
 .. c:type:: void (*uv_write_cb)(uv_write_t* req, int status)
 
-    Callback called after data was written on a stream. `status` will be 0 in
-    case of success, < 0 otherwise.
+    数据已经在流上写后的回调函数。
+    `status` 若成功将是0，否则 < 0。
 
 .. c:type:: void (*uv_connect_cb)(uv_connect_t* req, int status)
 
-    Callback called after a connection started by :c:func:`uv_connect` is done.
-    `status` will be 0 in case of success, < 0 otherwise.
+    以 :c:func:`uv_connect` 开启连接完成后的回调函数。
+    `status` 若成功将是0，否则 < 0。
 
 .. c:type:: void (*uv_shutdown_cb)(uv_shutdown_t* req, int status)
 
-    Callback called after a shutdown request has been completed. `status` will
-    be 0 in case of success, < 0 otherwise.
+    停机请求完成后的回调函数。
+    `status` 若成功将是0，否则 < 0。
 
 .. c:type:: void (*uv_connection_cb)(uv_stream_t* server, int status)
 
-    Callback called when a stream server has received an incoming connection.
-    The user can accept the connection by calling :c:func:`uv_accept`.
-    `status` will be 0 in case of success, < 0 otherwise.
+    当流服务器接收到新来的连接时的回调函数。
+    用户能够通过调用 :c:func:`uv_accept` 来接受连接。
+    `status` 若成功将是0，否则 < 0。
 
 
-Public members
+公共成员
 ^^^^^^^^^^^^^^
 
 .. c:member:: size_t uv_stream_t.write_queue_size
 
-    Contains the amount of queued bytes waiting to be sent. Readonly.
+    包含等待发送的排队字节的数量。 只读。
 
 .. c:member:: uv_stream_t* uv_connect_t.handle
 
-    Pointer to the stream where this connection request is running.
+    指向此连接请求所运行于的流的指针。
 
 .. c:member:: uv_stream_t* uv_shutdown_t.handle
 
-    Pointer to the stream where this shutdown request is running.
+    指向此停机请求所运行于的流的指针。
 
 .. c:member:: uv_stream_t* uv_write_t.handle
 
-    Pointer to the stream where this write request is running.
+    指向此写请求所运行于的流的指针。
 
 .. c:member:: uv_stream_t* uv_write_t.send_handle
 
-    Pointer to the stream being sent using this write request.
+    指向使用此连接请求被发送的的流的指针。
 
-.. seealso:: The :c:type:`uv_handle_t` members also apply.
+.. seealso:: :c:type:`uv_handle_t` 的成员也适用。
 
 
 API
@@ -106,54 +103,51 @@ API
 
 .. c:function:: int uv_shutdown(uv_shutdown_t* req, uv_stream_t* handle, uv_shutdown_cb cb)
 
-    Shutdown the outgoing (write) side of a duplex stream. It waits for pending
-    write requests to complete. The `handle` should refer to a initialized stream.
-    `req` should be an uninitialized shutdown request struct. The `cb` is called
-    after shutdown is complete.
+    停机双工流的向外（写）端。 它等待未处理的写请求完成。
+    `handle` 应该指向已初始化的流。
+    `req` 应该是一个未初始化的停机请求结构体。
+    `cb` 在停机完成后被调用。
 
 .. c:function:: int uv_listen(uv_stream_t* stream, int backlog, uv_connection_cb cb)
 
-    Start listening for incoming connections. `backlog` indicates the number of
-    connections the kernel might queue, same as :man:`listen(2)`. When a new
-    incoming connection is received the :c:type:`uv_connection_cb` callback is
-    called.
+    开始侦听新来的连接。
+    `backlog`指内核可能排队的连接数，与 :man:`listen(2)` 相同。
+    当接受到新来的连接时，调用 :c:type:`uv_connection_cb` 回调函数。
 
 .. c:function:: int uv_accept(uv_stream_t* server, uv_stream_t* client)
 
-    This call is used in conjunction with :c:func:`uv_listen` to accept incoming
-    connections. Call this function after receiving a :c:type:`uv_connection_cb`
-    to accept the connection. Before calling this function the client handle must
-    be initialized. < 0 return value indicates an error.
+    调用用来配合 :c:func:`uv_listen` 接受新来的连接。
+    在接收到 :c:type:`uv_connection_cb` 后调用这个函数以接受连接。
+    在调用这个函数前，客户端句柄必须被初始化。
+    < 0 返回值表示错误。
 
-    When the :c:type:`uv_connection_cb` callback is called it is guaranteed that
-    this function will complete successfully the first time. If you attempt to use
-    it more than once, it may fail. It is suggested to only call this function once
-    per :c:type:`uv_connection_cb` call.
+    当 :c:type:`uv_connection_cb` 回调函数被调用时，保证这个函数将会成功第一次。
+    如果你尝试使用超过一次，它可能失败。
+    建议每个 :c:type:`uv_connection_cb` 调用只调用这个函数一次。
 
     .. note::
-        `server` and `client` must be handles running on the same loop.
+        `server` 和 `client` 必须是运行在同一个循环之上的句柄。、
 
 .. c:function:: int uv_read_start(uv_stream_t* stream, uv_alloc_cb alloc_cb, uv_read_cb read_cb)
 
-    Read data from an incoming stream. The :c:type:`uv_read_cb` callback will
-    be made several times until there is no more data to read or
-    :c:func:`uv_read_stop` is called.
+    从内向的流读取数据。
+    将会调用 :c:type:`uv_read_cb` 回调函数几次直到没有更多数据可读或是调用了 :c:func:`uv_read_stop` 。
 
 .. c:function:: int uv_read_stop(uv_stream_t*)
 
-    Stop reading data from the stream. The :c:type:`uv_read_cb` callback will
-    no longer be called.
+    停止从流读取数据。
+    :c:type:`uv_read_cb` 回调函数将不再被调用。
 
-    This function is idempotent and may be safely called on a stopped stream.
+    这个函数是幂等的且可以在已停止的流上安全地被调用。
 
 .. c:function:: int uv_write(uv_write_t* req, uv_stream_t* handle, const uv_buf_t bufs[], unsigned int nbufs, uv_write_cb cb)
 
-    Write data to stream. Buffers are written in order. Example:
+    写数据到流。 缓冲区按序写入。例如：
 
     ::
 
         void cb(uv_write_t* req, int status) {
-            /* Logic which handles the write result */
+            /* 处理写结果的逻辑 */
         }
 
         uv_buf_t a[] = {
@@ -169,69 +163,63 @@ API
         uv_write_t req1;
         uv_write_t req2;
 
-        /* writes "1234" */
+        /* 写 "1234" */
         uv_write(&req1, stream, a, 2, cb);
         uv_write(&req2, stream, b, 2, cb);
 
     .. note::
-        The memory pointed to by the buffers must remain valid until the callback gets called.
-        This also holds for :c:func:`uv_write2`.
+        被缓冲区指向的内存必须保持有效直到回调函数执行完。
+        这也适用于 :c:func:`uv_write2` 。
 
 .. c:function:: int uv_write2(uv_write_t* req, uv_stream_t* handle, const uv_buf_t bufs[], unsigned int nbufs, uv_stream_t* send_handle, uv_write_cb cb)
 
-    Extended write function for sending handles over a pipe. The pipe must be
-    initialized with `ipc` == 1.
+    扩展的写函数用于在管道上发送句柄。
+    管道必须以 `ipc` == 1 初始化。
 
     .. note::
-        `send_handle` must be a TCP socket or pipe, which is a server or a connection (listening
-        or connected state). Bound sockets or pipes will be assumed to be servers.
+        `send_handle` 必须是一个TCP套接字或者管道，且为一个服务器或一个连接（侦听或已连接状态）。
+        绑定的套接字或管道将被假设是服务器。
 
 .. c:function:: int uv_try_write(uv_stream_t* handle, const uv_buf_t bufs[], unsigned int nbufs)
 
-    Same as :c:func:`uv_write`, but won't queue a write request if it can't be
-    completed immediately.
+    与 :c:func:`uv_write` 相同，但是如果无法立刻完成时不会排队写请求。
 
-    Will return either:
+    将返回以下之一：
 
-    * > 0: number of bytes written (can be less than the supplied buffer size).
-    * < 0: negative error code (``UV_EAGAIN`` is returned if no data can be sent
-      immediately).
+    * > 0: 已写字节数（可能小于提供的缓冲区大小）。
+    * < 0: 负的错误代码（返回 ``UV_EAGAIN`` 如果没有数据能立刻发送）。
 
 .. c:function:: int uv_is_readable(const uv_stream_t* handle)
 
-    Returns 1 if the stream is readable, 0 otherwise.
+    如果流可读返回1，否则0。
 
 .. c:function:: int uv_is_writable(const uv_stream_t* handle)
 
-    Returns 1 if the stream is writable, 0 otherwise.
+    如果流可写返回1，否则0。
 
 .. c:function:: int uv_stream_set_blocking(uv_stream_t* handle, int blocking)
 
-    Enable or disable blocking mode for a stream.
+    启用或禁用流的阻塞模式。
 
-    When blocking mode is enabled all writes complete synchronously. The
-    interface remains unchanged otherwise, e.g. completion or failure of the
-    operation will still be reported through a callback which is made
-    asynchronously.
+    当阻塞模式开启时所有的写都是同步完成的。
+    别的界面保持不变，比如操作完成或失败将仍然通过回调函数异步被报告。
 
     .. warning::
-        Relying too much on this API is not recommended. It is likely to change
-        significantly in the future.
+        太依赖于这个API是不推荐的。
+        它可能在未来明显地变化。
 
-        Currently only works on Windows for :c:type:`uv_pipe_t` handles.
-        On UNIX platforms, all :c:type:`uv_stream_t` handles are supported.
+        当前在Windows上只工作于 :c:type:`uv_pipe_t` 句柄。
+        在UNIX平台，所有的 :c:type:`uv_stream_t` 句柄都被支持。
 
-        Also libuv currently makes no ordering guarantee when the blocking mode
-        is changed after write requests have already been submitted. Therefore it is
-        recommended to set the blocking mode immediately after opening or creating
-        the stream.
+        另外当前libuv当阻塞模式在已经提交写请求之后改变时没有作顺序保证。
+        因此推荐在打开或创建流之后立即设置阻塞模式。
 
-    .. versionchanged:: 1.4.0 UNIX implementation added.
+    .. versionchanged:: 1.4.0 新增UNIX实现。
 
 .. c:function:: size_t uv_stream_get_write_queue_size(const uv_stream_t* stream)
 
-    Returns `stream->write_queue_size`.
+    返回 `stream->write_queue_size` 。
 
     .. versionadded:: 1.19.0
 
-.. seealso:: The :c:type:`uv_handle_t` API functions also apply.
+.. seealso:: :c:type:`uv_handle_t` 的API函数也适用。
