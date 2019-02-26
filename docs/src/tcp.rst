@@ -1,28 +1,28 @@
 
 .. _tcp:
 
-:c:type:`uv_tcp_t` --- TCP handle
+:c:type:`uv_tcp_t` --- TCP句柄
 =================================
 
-TCP handles are used to represent both TCP streams and servers.
+TCP句柄用于表示TCP流和服务器。
 
-:c:type:`uv_tcp_t` is a 'subclass' of :c:type:`uv_stream_t`.
+:c:type:`uv_tcp_t` 是 :c:type:`uv_stream_t` 的一个 '子类型' 。
 
 
-Data types
+数据类型
 ----------
 
 .. c:type:: uv_tcp_t
 
-    TCP handle type.
+    TCP句柄类型。
 
 
-Public members
+公共成员
 ^^^^^^^^^^^^^^
 
 N/A
 
-.. seealso:: The :c:type:`uv_stream_t` members also apply.
+.. seealso:: :c:type:`uv_stream_t` 的成员也适用。
 
 
 API
@@ -30,86 +30,76 @@ API
 
 .. c:function:: int uv_tcp_init(uv_loop_t* loop, uv_tcp_t* handle)
 
-    Initialize the handle. No socket is created as of yet.
+    初始化句柄。 迄今为止没有创建套接字。
 
 .. c:function:: int uv_tcp_init_ex(uv_loop_t* loop, uv_tcp_t* handle, unsigned int flags)
 
-    Initialize the handle with the specified flags. At the moment only the lower 8 bits
-    of the `flags` parameter are used as the socket domain. A socket will be created
-    for the given domain. If the specified domain is ``AF_UNSPEC`` no socket is created,
-    just like :c:func:`uv_tcp_init`.
+    以指定的标志来初始化句柄。
+    在此刻只有 `flags` 参数的低8位用于套接字域。一个套接字将为给定的域创建。
+    如果指定的域是 ``AF_UNSPEC`` 则没有套接字被创建，就像 :c:func:`uv_tcp_init` 一样。
 
     .. versionadded:: 1.7.0
 
 .. c:function:: int uv_tcp_open(uv_tcp_t* handle, uv_os_sock_t sock)
 
-    Open an existing file descriptor or SOCKET as a TCP handle.
+    打开一个已存在的文件描述符或者套接字作为一个TCP句柄。
 
-    .. versionchanged:: 1.2.1 the file descriptor is set to non-blocking mode.
+    .. versionchanged:: 1.2.1 文件描述符设为非阻塞模式。
 
     .. note::
-        The passed file descriptor or SOCKET is not checked for its type, but
-        it's required that it represents a valid stream socket.
+        被传递的文件描述符或套接字没有类型检查，但是需要它代表一个合法的流套接字。
 
 .. c:function:: int uv_tcp_nodelay(uv_tcp_t* handle, int enable)
 
-    Enable `TCP_NODELAY`, which disables Nagle's algorithm.
+    开启 `TCP_NODELAY`，禁用Nagle算法。
 
 .. c:function:: int uv_tcp_keepalive(uv_tcp_t* handle, int enable, unsigned int delay)
 
-    Enable / disable TCP keep-alive. `delay` is the initial delay in seconds,
-    ignored when `enable` is zero.
+    开启/禁用TCP keep-alive。 `delay` 是以秒计的起始延迟，当 `enable` 是零时被忽略。
 
 .. c:function:: int uv_tcp_simultaneous_accepts(uv_tcp_t* handle, int enable)
 
-    Enable / disable simultaneous asynchronous accept requests that are
-    queued by the operating system when listening for new TCP connections.
+    开启/禁用同时异步的接受请求被操作系统排队当侦听新来的TCP连接时。
 
-    This setting is used to tune a TCP server for the desired performance.
-    Having simultaneous accepts can significantly improve the rate of accepting
-    connections (which is why it is enabled by default) but may lead to uneven
-    load distribution in multi-process setups.
+    这个设置用来调整TCP服务器达到满意的性能。
+    拥有同时接受能显著地提高接受连接的速率（这就是为什么它默认开启），
+    但是可能导致在多进程设置下不均衡的负载。
 
 .. c:function:: int uv_tcp_bind(uv_tcp_t* handle, const struct sockaddr* addr, unsigned int flags)
 
-    Bind the handle to an address and port. `addr` should point to an
-    initialized ``struct sockaddr_in`` or ``struct sockaddr_in6``.
+    绑定句柄到一个地址和端口。 `addr` 应该指向一个初始化了的
+    ``struct sockaddr_in`` 或者 ``struct sockaddr_in6`` 。
 
-    When the port is already taken, you can expect to see an ``UV_EADDRINUSE``
-    error from either :c:func:`uv_tcp_bind`, :c:func:`uv_listen` or
-    :c:func:`uv_tcp_connect`. That is, a successful call to this function does
-    not guarantee that the call to :c:func:`uv_listen` or :c:func:`uv_tcp_connect`
-    will succeed as well.
+    当端口已经被占用时，你会预期见到一个 ``UV_EADDRINUSE``
+    错误来自于 :c:func:`uv_tcp_bind` 、 :c:func:`uv_listen` 或
+    :c:func:`uv_tcp_connect` 之一。 那就是说，一个对此函数成功的调用并不保证对
+    :c:func:`uv_listen` 或 :c:func:`uv_tcp_connect`
+    的调用也会成功。
 
-    `flags` can contain ``UV_TCP_IPV6ONLY``, in which case dual-stack support
-    is disabled and only IPv6 is used.
+    `flags` 能包括 ``UV_TCP_IPV6ONLY`` ，在这种情况下禁用双栈支持且只使用IPv6。
 
 .. c:function:: int uv_tcp_getsockname(const uv_tcp_t* handle, struct sockaddr* name, int* namelen)
 
-    Get the current address to which the handle is bound. `name` must point to
-    a valid and big enough chunk of memory, ``struct sockaddr_storage`` is
-    recommended for IPv4 and IPv6 support.
+    获取句柄当前绑定的地址。 `name` 必须指向一个合法且足够大的内存块，
+    推荐使用 ``struct sockaddr_storage`` 获得IPv4和IPv6支持。
 
 .. c:function:: int uv_tcp_getpeername(const uv_tcp_t* handle, struct sockaddr* name, int* namelen)
 
-    Get the address of the peer connected to the handle. `name` must point to
-    a valid and big enough chunk of memory, ``struct sockaddr_storage`` is
-    recommended for IPv4 and IPv6 support.
+    连接到句柄的远端的地址。 `name` 必须指向一个合法且足够大的内存块，
+    推荐使用 ``struct sockaddr_storage`` 获得IPv4和IPv6支持。
 
 .. c:function:: int uv_tcp_connect(uv_connect_t* req, uv_tcp_t* handle, const struct sockaddr* addr, uv_connect_cb cb)
 
-    Establish an IPv4 or IPv6 TCP connection. Provide an initialized TCP handle
-    and an uninitialized :c:type:`uv_connect_t`. `addr` should point to an
-    initialized ``struct sockaddr_in`` or ``struct sockaddr_in6``.
+    建立一个IPv4或IPv6的TCP连接。 提供一个已初始化的TCP句柄和一个未初始化的
+    :c:type:`uv_connect_t` 。 `addr` 应该指向一个已初始化的
+    ``struct sockaddr_in`` 或 ``struct sockaddr_in6`` 。
 
-    On Windows if the `addr` is initialized to point to an unspecified address
-    (``0.0.0.0`` or ``::``) it will be changed to point to ``localhost``.
-    This is done to match the behavior of Linux systems.
+    在Windows上如果 `addr` 被初始化指向一个未指定的地址
+    （ ``0.0.0.0`` 或者 ``::`` ），它将被改变以指向 ``localhost`` 。
+    这么做是为了符合Linux系统的行为。
 
-    The callback is made when the connection has been established or when a
-    connection error happened.
+    这个回调函数当连接已建立或当连接发生错误时被调用。
 
-    .. versionchanged:: 1.19.0 added ``0.0.0.0`` and ``::`` to ``localhost``
-        mapping
+    .. versionchanged:: 1.19.0 新增 ``0.0.0.0`` 和 ``::`` 到 ``localhost`` 的映射
 
-.. seealso:: The :c:type:`uv_stream_t` API functions also apply.
+.. seealso:: :c:type:`uv_stream_t` 的API函数也适用。
